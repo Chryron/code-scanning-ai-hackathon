@@ -9,8 +9,6 @@ def init():
 
     for commit in commits:
         commit['data'] = query_github(commit_sha = commit['hash'])
-        
-        
     pass
 
 
