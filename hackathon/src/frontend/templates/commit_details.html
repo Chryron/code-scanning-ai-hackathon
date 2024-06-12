@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commit Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .vulnerability {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Commit Details for {{ commit.hash }}</h1>
+        <p><strong>Date:</strong> {{ commit.date }}</p>
+        <p><strong>Message:</strong> {{ commit.data.message }}</p>
+
+        <h2>Vulnerabilities</h2>
+        <div class="vulnerabilities">
+            {% for result in commit.results %}
+            <div class="vulnerability">
+                <p><strong>Rule ID:</strong> {{ result.ruleID }}</p>
+                <p><strong>Message:</strong> {{ result.message }}</p>
+                <h3>Locations:</h3>
+                <ul>
+                    {% for location in result.locations %}
+                    <li>File: {{ location.file }}, Line: {{ location.line }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

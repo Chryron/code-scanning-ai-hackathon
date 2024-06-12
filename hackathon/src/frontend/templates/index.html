@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commit History</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .commit {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        th {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Commit History</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><a href="?sort_by=date&reverse={{ 'true' if sort_by == 'date' and not reverse else 'false' }}">Date</a></th>
+                    <th><a href="?sort_by=stats.errors&reverse={{ 'true' if sort_by == 'stats.errors' and not reverse else 'false' }}">Errors</a></th>
+                    <th><a href="?sort_by=stats.warnings&reverse={{ 'true' if sort_by == 'stats.warnings' and not reverse else 'false' }}">Warnings</a></th>
+                    <th><a href="?sort_by=stats.severity&reverse={{ 'true' if sort_by == 'stats.severity' and not reverse else 'false' }}">Severity</a></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for commit in commits %}
+                <tr>
+                    <td><a href="/commit/{{ commit.hash }}">{{ commit.date }}</a></td>
+                    <td>{{ commit.stats.errors }}</td>
+                    <td>{{ commit.stats.warnings }}</td>
+                    <td>{{ commit.stats.severity }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

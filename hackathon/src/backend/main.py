@@ -9,7 +9,7 @@ def init():
 
     for commit in commits:
         commit['data'] = query_github(commit_sha = commit['hash'])
-    pass
+    return commits
 
 
 if __name__ == "__main__":
