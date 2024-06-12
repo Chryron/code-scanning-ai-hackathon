@@ -20,4 +20,12 @@ def parse_sarif_files():
 
     return sarif_dicts
     
-parse_sarif_files()
+
+def parse_sarif_results(sarif_runs):
+    sarif_vulnerabilities = {}
+    for hash, run in sarif_runs.items():
+        sarif_vulnerabilities[hash] = run['results']
+    return sarif_vulnerabilities
+
+sarif_runs = parse_sarif_files()
+parse_sarif_results(sarif_runs)
