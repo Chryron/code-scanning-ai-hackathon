@@ -210,8 +210,9 @@ def detail_main(typeofissue = "old_vulnerabilities", color="yellow"):
                     rx.link(item['file']['filepath']+":"+ln, href="https://github.com/tensorflow/tensorflow/tree/master/"+item['file']['filepath'], style=style.inline),
                     *codeblock,
                     rx.html("<br>"),
-                    rx.button("✨", style={"background-color":"#0b082b","color":"white","border":"0","border-radius":"30%"}),
-
+                    rx.button("✨", style={"background-color":"#0b082b","color":"white","border":"0","border-radius":"30%"}
+                            , on_click=rx.window_alert(fix_vulnerability(item))
+                              ),
                     ),
             ),
         )
