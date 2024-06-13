@@ -16,6 +16,7 @@ pydeck = "^0.9.1"
 pygithub = "^2.3.0"
 flask = "^3.0.3"
 levenshtein = "^0.25.1"
+reflex = "0.5.3"
 
 
 [build-system]
