@@ -13,8 +13,8 @@
 
 1. **Clone the Repository**:
     ```bash
-    git clone <repository_url>
-    cd <repository_name>
+    git clone https://github.com/Chryron/code-scanning-ai-hackathon.git
+    cd code-scanning-ai-hackathon
     ```
 
 2. **Install Dependencies**:
