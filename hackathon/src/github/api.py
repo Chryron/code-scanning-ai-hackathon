@@ -12,6 +12,7 @@ def query_github(owner = 'tensorflow', repo = 'tensorflow', commit_sha = 'a632c8
         relevant_commit_data['message'] = commit_data['commit']['message']
         relevant_commit_data['url'] = commit_data['html_url']
         relevant_commit_data['files'] = commit_data['files']
+        relevant_commit_data['commit'] = commit_data['commit']
     else:
         print(f'Error: {response.status_code}')
     
@@ -23,7 +24,8 @@ def query_github(owner = 'tensorflow', repo = 'tensorflow', commit_sha = 'a632c8
 def compare_code(relevant_commit_data):
     files, i = {}, 0
     for file in relevant_commit_data['files']:
-        files[file['filename']] = relevant_commit_data['files'][i]['patch']
+        files[file['filename']] = {}
+        files[file['filename']]['changes'] = relevant_commit_data['files'][i]['patch']
         i += 1
 
     relevant_commit_data['files'] = files
@@ -41,7 +43,9 @@ def parse_authors(relevant_commit_data):
         author_data[new_key] = relevant_commit_data['author'][old_key]
         committer_data[new_key] = relevant_commit_data['committer'][old_key]
     relevant_commit_data['author'] = author_data
+    relevant_commit_data['author'].update(relevant_commit_data['commit']['author'])
     relevant_commit_data['committer'] = committer_data
+    relevant_commit_data['committer'].update(relevant_commit_data['commit']['committer'])
 
 
     
