@@ -58,6 +58,12 @@ bubble_hash= {
 "z-index": "1",
 "font-size": "14px"
 }
+
+vulnerabilitybubble={
+"display": "inline",
+"background-color": "#ffac69",
+
+}
 bubble_author= {
 "background-color": "#28a745",
 "display":"inline",
@@ -70,4 +76,7 @@ bubble_date= {
 
 detail_page_dropdown = {
     "width":"100%",
+}
+messagetext = {
+    "width":"80%",
 }
