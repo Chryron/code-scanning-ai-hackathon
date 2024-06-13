@@ -11,8 +11,10 @@ class State(rx.State):
     opened_commit:list[str]
 
     def showcommit(self):
-        print(self)
         rx.window_alert("hi")
+    def clickcommit(self,value):
+        print(value)
+        clicked_commit = value
 
 def commit_row(row):
     return rx.link(
@@ -27,7 +29,7 @@ def commit_row(row):
             style=style.commit,
             _hover=style.commit_hover,
         ),
-        on_click=State.showcommit,
+        on_click=State.clickcommit(row['hash']),
         style=style.commit_a,
     )
 def detail_page():
