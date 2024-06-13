@@ -5,19 +5,34 @@ import reflex as rx
 from rxconfig import config
 import style 
 from gitlog import gitlog
-class State(rx.State):
+opened_commit_global = set()
+clicked_page = ""
+class mystate(rx.State):
     """The app state."""
     clicked_commit:str
-    opened_commit:list[str]
-
-    def showcommit(self):
-        rx.window_alert("hi")
+    opened_commit:set[str]
+    def showcommit(self,hash_):
+        print("made",hash_ )
+        rx.redirect(hash_, external=True)
+    def get_opened_commit(self):
+        return set(self.opened_commit)
     def clickcommit(self,value):
-        print(value)
-        clicked_commit = value
+        global opened_commit_global ,clicked_page 
+        self.clicked_commit = value
+        if self.clicked_commit in self.opened_commit:
+            self.opened_commit.remove(self.clicked_commit)
+            opened_commit_global.remove(self.clicked_commit)
+        else:
+            self.opened_commit.add(self.clicked_commit)
+            opened_commit_global.add(self.clicked_commit)
+        rx.redirect("https://www.google.com/hello", external=True)
+        clicked_page = self.clicked_commit
+        
+        self.showcommit(self.clicked_commit)
 
+        
 def commit_row(row):
-    return rx.link(
+    row = rx.link(
         rx.box(
             rx.text(row['message']),
             rx.text(row['hash'][:9], style=style.bubble|style.bubble_hash),
@@ -25,41 +40,20 @@ def commit_row(row):
                 rx.text(row['author'], style=style.bubble|style.bubble_author),
                 rx.text(row['shortdate'], style=style.bubble|style.bubble_date),
                 style=style.commit_info,
+
             ),
             style=style.commit,
             _hover=style.commit_hover,
         ),
-        on_click=State.clickcommit(row['hash']),
+        on_click=mystate.clickcommit(row['hash']),
+        href="/"+row['hash'],
         style=style.commit_a,
     )
-def detail_page():
-    return rx.accordion.root(
-        rx.accordion.item(
-            header="First Item",
-            content=rx.text('message'),
-        ),
-        rx.accordion.item(
-            header="Second Item",
-            content=codeblock(),
-        ),
-        rx.accordion.item(
-            header="Third item",
-            content=codediff("import matplotlib as mpt"),
+    return row
 
-        ),
-        collapsible=True,
-        variant="ghost",
-        width="100%",
-        type="multiple",
-    )
-def dropdown_section():
-    return rx.container(
-        rx.text("Dropdown Section"),
-        rx.container(
-            rx.text("This is the content of the dropdown section."),
-            rx.text("You can add more components here."),
-        ),
-    )
+
+
+
 def codeblock():
     return rx.code_block(
         """def fib(n):
@@ -86,12 +80,42 @@ def codediff(text):
     </pre>
     """ )
 
+
 def index() -> rx.Component:
     return rx.container(
-        detail_page(),
+        rx.text(clicked_page ),
         *[commit_row(row) for row in gitlog],
         style = style.commit_container,
     )
 
+
 app = rx.App()
 app.add_page(index)
+
+buf = {}
+def detail_page()-> rx.Component:
+    global buf
+    return rx.accordion.root(
+        rx.accordion.item(
+            header=buf['author'],
+            content=rx.text('message'),
+        ),
+        rx.accordion.item(
+            header="Second Item",
+            content=codeblock(),
+        ),
+        rx.accordion.item(
+            header="Third item",
+            content=codediff("import matplotlib as mpt"),
+
+        ),
+        collapsible=True,
+        variant="ghost",
+        width="100%",
+        type="multiple",
+    )
+
+for commit in gitlog:
+    hash_ = commit['hash']
+    buf = commit
+    app.add_page(detail_page, route=hash_,)

@@ -37,7 +37,6 @@ def parse_git_log(git_log):
 
     commit_dicts = []
     for commit in commits:
-        print("-----------------------",commit)
         # Use regex to extract the hash, author, date, and message
         hash_ = re.search(r'([a-f0-9]{40})', commit).group(1)
         author = re.search(r'Author: (.*) <', commit).group(1)
@@ -53,4 +52,3 @@ def parse_git_log(git_log):
 
     return commit_dicts
 gitlog = parse_git_log(git_log_output)
-print(gitlog)
