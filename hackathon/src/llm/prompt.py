@@ -7,7 +7,7 @@ from langchain.schema import HumanMessage, SystemMessage, ChatMessage
 
 
 load_dotenv()
-API_KEY = os.environ.get("API_KEY")
+API_KEY = os.environ.get("Ocp-Apim-Subscription-Key")
 chat = HubChatModel(deployment=ChatDeploymentEnum.Default, api_key = API_KEY, max_tokens = 8000)
 
 def predict(prompt):
@@ -27,7 +27,7 @@ def fix_vulnerability(vulnerability_dict):
     for line in relevant_code_lines:
         if line['add_line'] is None: continue
         elif line['add_line'] < line_number + 5 and line['add_line'] > line_number - 5:
-            code += f'[{line['add_line']}]:' + line['content']+ '\n'
+            code += f'[{line["add_line"]}]:' + line['content']+ '\n'
        
     # Define the input message
     fix_vulnerability_prompt = """The following vulnerability was found by a CodeQL scan within a codebase:

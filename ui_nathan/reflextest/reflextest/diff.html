@@ -1,0 +1,35 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>Python Code Diff</title>  
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>  
+    <style>  
+        .removed {  
+            background-color: #ffdddd;  
+        }  
+        .added {  
+            background-color: #ddffdd;  
+        }  
+    </style>  
+</head>  
+<body>  
+    <h1>Python Code Diff</h1>  
+    <h2>Original Code</h2>  
+    <pre class="prettyprint lang-py">  
+def hello_world():  
+    print("Hello, world!")  
+    </pre>  
+    <h2>Modified Code</h2>  
+    <pre class="prettyprint lang-py">  
+def hello_world(name):  
+    print(f"Hello, {name}!")  
+    </pre>  
+    <h2>Diff</h2>  
+    <pre class="prettyprint lang-py">  
+<span class="removed">-def hello_world():</span>  
+<span class="added">+def hello_world(name):</span>  
+<span class="removed">-    print("Hello, world!")</span>  
+<span class="added">+    print(f"Hello, {name}!")</span>  
+    </pre>  
+</body>  
+</html>  

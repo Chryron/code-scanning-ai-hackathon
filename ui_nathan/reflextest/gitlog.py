@@ -33,7 +33,7 @@ def convert_time_string(time_string):
 
 def parse_git_log(git_log):
     # Split the git log by 'commit '
-    commits = git_log.split('commit ')[1:]  # The first element is empty, so skip it
+    commits = git_log.split('\ncommit ')  # The first element is empty, so skip it
 
     commit_dicts = []
     for commit in commits:
@@ -52,4 +52,3 @@ def parse_git_log(git_log):
 
     return commit_dicts
 gitlog = parse_git_log(git_log_output)
-print(gitlog)
