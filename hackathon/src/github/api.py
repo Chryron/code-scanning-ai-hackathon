@@ -5,9 +5,10 @@ from dotenv import load_dotenv
 import tempfile
 import shutil
 
+OLD_REPO_DIR = os.getenv('REPO_DIR')
 load_dotenv()
 API_KEY = os.getenv('GITHUB_API_KEY')
-REPO_DIR = os.getenv('REPO_DIR')
+REPO_DIR = os.getenv('REPO_DIR') if os.getenv('REPO_DIR') else OLD_REPO_DIR
 
 def query_github(owner = 'tensorflow', repo = 'tensorflow', commit_sha = 'a632c89dd778'):
     url = f'https://api.github.com/repos/{owner}/{repo}/commits/{commit_sha}'
