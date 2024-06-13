@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request
 import json
 import operator
+import sys, os
+sys.path.append( "/home/nathan/Desktop/code-scanning-ai-hackathon")
+
 from hackathon.src.backend.main import init
 
 app = Flask(__name__)

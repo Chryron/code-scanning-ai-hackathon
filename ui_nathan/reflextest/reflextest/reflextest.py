@@ -95,14 +95,14 @@ app.add_page(index)
 buf = {}
 def detail_page()-> rx.Component:
     global buf
+    return rx.container(    
+        detail_main()
+    )
+def detail_main():
+    global buf
     return rx.accordion.root(
         rx.accordion.item(
             header=buf['author'],
-            content=rx.text('message'),
-        ),
-        rx.accordion.item(
-            header="Second Item",
-            content=codeblock(),
         ),
         rx.accordion.item(
             header="Third item",

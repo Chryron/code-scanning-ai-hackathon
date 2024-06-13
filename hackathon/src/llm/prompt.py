@@ -27,7 +27,7 @@ def fix_vulnerability(vulnerability_dict):
     for line in relevant_code_lines:
         if line['add_line'] is None: continue
         elif line['add_line'] < line_number + 5 and line['add_line'] > line_number - 5:
-            code += f'[{line['add_line']}]:' + line['content']+ '\n'
+            code += f'[{line["add_line"]}]:' + line['content']+ '\n'
        
     # Define the input message
     fix_vulnerability_prompt = """The following vulnerability was found by a CodeQL scan within a codebase:

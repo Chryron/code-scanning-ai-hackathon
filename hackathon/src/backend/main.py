@@ -1,4 +1,6 @@
 import os
+import sys, os
+sys.path.append("/home/nathan/Desktop/code-scanning-ai-hackathon/")
 from hackathon.src.parser.sarif import parse_sarif_files
 from hackathon.src.github.api import query_github, run_git_blame
 from hackathon.src.llm.prompt import fix_vulnerability
