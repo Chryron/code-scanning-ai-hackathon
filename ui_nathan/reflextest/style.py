@@ -61,7 +61,28 @@ bubble_hash= {
 
 vulnerabilitybubble={
 "display": "inline",
-"background-color": "#ffac69",
+"background-color": "#384252",
+
+}
+inline = {
+    "display": "inline",
+
+}
+block = {
+    "display": "block",
+
+}
+
+bold = {
+"font_weight": "bold",
+
+}
+red = {
+"background-color": "#d6620f",
+
+}
+orange={
+"background-color": "#d6b20f",
 
 }
 bubble_author= {
