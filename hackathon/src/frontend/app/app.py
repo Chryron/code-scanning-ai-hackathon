@@ -186,7 +186,7 @@ def detail_page()-> rx.Component:
 def detail_main(typeofissue = "old_vulnerabilities", color="yellow"):
     global buf
 
-    print(len(buf[typeofissue]))
+    # print(len(buf[typeofissue]))
     codeblocks = []
     first = True
     for item in buf[typeofissue]:
@@ -242,7 +242,7 @@ def detail_main(typeofissue = "old_vulnerabilities", color="yellow"):
                     *codeblock,
                     rx.html("<br>"),
                     rx.button("✨", style={"background-color":"#0b082b","color":"white","border":"0","border-radius":"30%"}
-                            , on_click=rx.window_alert(fix_vulnerability(item))
+                            # , on_click=rx.window_alert(fix_vulnerability(item))
                               ),
                     ),
             ),

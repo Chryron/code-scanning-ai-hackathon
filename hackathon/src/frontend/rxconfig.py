@@ -1,5 +1,7 @@
 import reflex as rx
+import os
 
+# get working directory
 config = rx.Config(
-    app_name="main",
+    app_name="app",
 )

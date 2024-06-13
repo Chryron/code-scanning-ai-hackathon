@@ -7,12 +7,14 @@ from hackathon.src.llm.prompt import fix_vulnerability
 from Levenshtein import distance as levenshtein
 
 import pickle
-
-MEM_LOCATION = '/home/nathan/Desktop/code-scanning-ai-hackathon/mem.pkl'
+# location of this file 
+DIR = os.path.dirname(os.path.realpath(__file__))
+MEM_LOCATION = DIR+'/../../../'+'mem.pkl'
 # backend initialization for streamlit
 def init():
     if os.path.exists(MEM_LOCATION):
         # Open the pickle file and load the data into commits
+        # print("Found data cache")
         with open(MEM_LOCATION, 'rb') as file:
             commits = pickle.load(file)
         return commits

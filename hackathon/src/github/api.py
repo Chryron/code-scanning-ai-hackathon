@@ -114,10 +114,8 @@ def run_git_blame(commits, owner = 'tensorflow', repo = 'tensorflow'):
 
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while running Git commands: {e}")
-        return None
+        shutil.rmtree(temp_dir)
+        raise ValueError('Git Repo has been wiped and will be cloned again')
+        
 
-    finally:
-        # Clean up by deleting the temporary directory
-        # shutil.rmtree(temp_dir)
-        pass
 

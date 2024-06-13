@@ -3,15 +3,9 @@ import os
 import getpass
 # Get the username of the current user
 username = getpass.getuser()
-DATA_DIR = "./hackathon/data"
-# Check if the username is 'nathan'
-if username == 'nathan':
-    # Code to execute if the user is 'nathan'
-    print("User is Nathan")
-    DATA_DIR = '/home/nathan/Desktop/code-scanning-ai-hackathon/hackathon/data'
-else:
-    # Code to execute if the user is not 'nathan'
-    print("User is not Nathan")
+# directory of this file
+DIR = os.path.dirname(os.path.realpath(__file__))
+DATA_DIR = DIR+"/../.."+"/data"
 
 # create a loop that iterates through the ./challenges/resources/sarifs directory
 # and parses each file (ending in .sarif) into a dictionary
