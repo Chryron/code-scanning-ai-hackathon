@@ -13,7 +13,7 @@
 
 1. **Clone the Repository**:
     ```bash
-    git clone https://github.com/Chryron/code-scanning-ai-hackathon.git
+    git clone git@github.com:this-is-you/first-contributions.git
     cd code-scanning-ai-hackathon
     ```
 
