@@ -6,7 +6,7 @@ authors = ["Nazmus Saadat <nazmus.saadat1@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.10"
 langchain = "^0.2.3"
 jupyter = "^1.0.0"
 python-dotenv = "^1.0.1"
@@ -15,6 +15,7 @@ pandas = "^2.2.2"
 pydeck = "^0.9.1"
 pygithub = "^2.3.0"
 flask = "^3.0.3"
+levenshtein = "^0.25.1"
 
 
 [build-system]

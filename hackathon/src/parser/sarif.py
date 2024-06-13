@@ -14,14 +14,13 @@ def parse_sarif_files():
 
     sarifs = []
     i = 0 
-    relevant_keys = ['artifacts', 'results', 'properties']
+    relevant_keys = {'results': 'all_vulnerabilities'}
     for file in sarif_files:
         with open(file, 'r') as f:
             data = json.load(f)['runs'][0]
 
             get_severity(data)
-            
-            new_data = {key: data[key] for key in relevant_keys}
+            new_data = {new_key: data[old_key] for old_key, new_key in relevant_keys.items()}
             new_data['hash'] = hashes[i]
             new_data['date'] = dates[i]
             get_stats(new_data)
@@ -40,8 +39,9 @@ def get_severity(data):
     for vul in relevant_vuls:
         vul['details'] = vul_dict[vul['ruleId']]
     pass
+
 def parse_results(sarif):
-    for vul in sarif['results']:
+    for vul in sarif['all_vulnerabilities']:
         locations = vul['locations']
         loc = []
         for location in locations:
@@ -55,7 +55,7 @@ def get_stats(data):
     total_security_severity = 0
     total_errors = 0
     total_warnings = 0
-    for bug in data['results']:
+    for bug in data['all_vulnerabilities']:
         severity = bug['details']['problem.severity']
         if severity == 'error': total_errors += 1
         elif severity == 'warning': total_warnings += 1
@@ -66,8 +66,5 @@ def get_stats(data):
         'total_warnings': total_warnings
     }
 
-
-
-
-sarif_runs = parse_sarif_files()
+# sarif_runs = parse_sarif_files()
 # parse_sarif_results(sarif_runs)
