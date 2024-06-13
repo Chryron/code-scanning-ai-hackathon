@@ -108,13 +108,44 @@ def codediff(lines):
     </pre>
     """ )
 
+data = []
+def graph():
+    global data
+    for commit in commits:
+        num = len(commit["introduced"])
+        cumulative = len(commit["old_vulnerabilities"])
+        data.append(
+            {"name": commit['date'], "issues introduced": num, "cumulative": cumulative},
+
+        )
+    return rx.recharts.line_chart(
+        rx.recharts.line(
+            data_key="issues introduced",
+            stroke="#8884d8",
+        ),
+        rx.recharts.line(
+            data_key="cumulative",
+            stroke="#82ca9d",
+        ),
+        rx.recharts.x_axis(data_key="name"),
+        rx.recharts.y_axis(),
+        rx.recharts.legend(),
+        data=data,
+        width=500,
+        height=300,
+    )
+
 
 def index() -> rx.Component:
     cms = [commit_row(row) for row in commits]
     
     ind =rx.container(
+        
         rx.text("AMD Code Detective🔎", style={"font-size":"2em","font-weight":"bold","color":"#0b082b"}),
         rx.html("<br>"),
+        graph(),
+        rx.html("<br>"),
+    
         rx.text(clicked_page ),
         *cms,
         style = style.commit_container,
@@ -224,7 +255,10 @@ def detail_main(typeofissue = "old_vulnerabilities", color="yellow"):
         type="multiple",
         color_scheme=color
     )
+import time
 def cbk(item):
+    time.sleep(1.5)
+
     print(type(item))
 for commit in commits:
     hash_ = commit['hash']

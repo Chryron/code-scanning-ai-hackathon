@@ -8,7 +8,7 @@ from Levenshtein import distance as levenshtein
 
 import pickle
 
-MEM_LOCATION = 'mem.pkl'
+MEM_LOCATION = '/home/nathan/Desktop/code-scanning-ai-hackathon/mem.pkl'
 # backend initialization for streamlit
 def init():
     if os.path.exists(MEM_LOCATION):
