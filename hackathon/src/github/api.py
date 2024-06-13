@@ -7,15 +7,20 @@ import shutil
 
 load_dotenv()
 API_KEY = os.getenv('GITHUB_API_KEY')
+REPO_DIR = os.getenv('REPO_DIR')
 
 def query_github(owner = 'tensorflow', repo = 'tensorflow', commit_sha = 'a632c89dd778'):
     url = f'https://api.github.com/repos/{owner}/{repo}/commits/{commit_sha}'
-    headers = {
-        'Authorization': f'Bearer {API_KEY}',
-        'X-GitHub-Api-Version': '2022-11-28',
-        'Accept': 'application/vnd.github.v3+json'
-    }
-    response = requests.get(url, headers=headers)
+    if API_KEY is None or API_KEY == '' or API_KEY == 'YOUR-API-KEY-HERE':
+        print('WARNING: No GitHub API Key found. Attempting to query GitHub without authentication.')
+        response = requests.get(url, headers=headers)
+    else:
+        headers = {
+            'Authorization': f'Bearer {API_KEY}',
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Accept': 'application/vnd.github.v3+json'
+        }
+        response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
         commit_data = response.json()
@@ -68,15 +73,24 @@ def parse_authors(relevant_commit_data):
 
 def run_git_blame(commits, owner = 'tensorflow', repo = 'tensorflow'):
     # Create a temporary directory
-    temp_dir = tempfile.mkdtemp()
+    if REPO_DIR is not None and REPO_DIR != '':
+        temp_dir = REPO_DIR
+    else:
+        temp_dir = tempfile.mkdtemp()
+        # set env variable REPO_DIR
+        os.environ['REPO_DIR'] = temp_dir
     # temp_dir = '/tmp/tmpm7pcpzge'
-    repo_url = f'https://github.com/{owner}/{repo}.git'
-
-    try:
+        repo_url = f'https://github.com/{owner}/{repo}.git'
+        try:
         # Clone the repository into the temporary directory
-        clone_cmd = ['git', 'clone', repo_url, temp_dir]
-        subprocess.check_call(clone_cmd)
-
+            clone_cmd = ['git', 'clone', repo_url, temp_dir]
+            subprocess.check_call(clone_cmd)
+        except subprocess.CalledProcessError as e:
+            print(f"An error occurred while running Git commands: {e}")
+            shutil.rmtree(temp_dir)
+            return None
+        
+    try:
         # Change to the cloned repository directory
         os.chdir(temp_dir)
         for commit in commits:
@@ -103,6 +117,6 @@ def run_git_blame(commits, owner = 'tensorflow', repo = 'tensorflow'):
 
     finally:
         # Clean up by deleting the temporary directory
-        shutil.rmtree(temp_dir)
+        # shutil.rmtree(temp_dir)
         pass
 
