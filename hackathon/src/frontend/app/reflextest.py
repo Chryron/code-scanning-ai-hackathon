@@ -3,13 +3,14 @@
 import reflex as rx
 import sys, os
 from hackathon.src.backend.main import init
-from hackathon.src.frontend.rxconfig import config
+from hackathon.src.llm.prompt import fix_vulnerability
+from rxconfig import config
 import hackathon.src.frontend.style as style
+opened_commit_global = set()
+clicked_page = ""
 
 commits = init()
 
-opened_commit_global = set()
-clicked_page = ""
 class mystate(rx.State):
     """The app state."""
     clicked_commit:str
@@ -32,9 +33,13 @@ class mystate(rx.State):
         clicked_page = self.clicked_commit
         
         self.showcommit(self.clicked_commit)
-
-        
+first=True
 def commit_row(commit, clickable =True):
+    global first
+    firstdict = {"background-color":"#ffeeaa"}
+    if first:
+        firstdict = {"background-color":"#ddffdd"}
+    
     row = commit["commit_data"]
     insidebox = rx.box(
             rx.text(row['message'].split("\n\n")[0], style=style.messagetext),
@@ -45,13 +50,16 @@ def commit_row(commit, clickable =True):
                 style=style.commit_info,
 
             ),
-            style=style.commit,
+            style=style.commit|firstdict,
             _hover=style.commit_hover,
         ),
+    if first:
+        first=False
     if clickable:
         row = rx.link(
             insidebox,
             on_click=mystate.clickcommit(commit['hash']),
+    
             href="/"+commit['hash'],
             style=style.commit_a,
         )
@@ -100,13 +108,49 @@ def codediff(lines):
     </pre>
     """ )
 
+data = []
+def graph():
+    global data
+    for commit in commits:
+        num = len(commit["introduced"])
+        cumulative = len(commit["old_vulnerabilities"])
+        data.append(
+            {"name": commit['date'], "issues introduced": num, "cumulative": cumulative},
+
+        )
+    return rx.recharts.line_chart(
+        rx.recharts.line(
+            data_key="issues introduced",
+            stroke="#8884d8",
+        ),
+        rx.recharts.line(
+            data_key="cumulative",
+            stroke="#82ca9d",
+        ),
+        rx.recharts.x_axis(data_key="name"),
+        rx.recharts.y_axis(),
+        rx.recharts.legend(),
+        data=data,
+        width=500,
+        height=300,
+    )
+
 
 def index() -> rx.Component:
-    return rx.container(
+    cms = [commit_row(row) for row in commits]
+    
+    ind =rx.container(
+        
+        rx.text("AMD Code Detective🔎", style={"font-size":"2em","font-weight":"bold","color":"#0b082b"}),
+        rx.html("<br>"),
+        graph(),
+        rx.html("<br>"),
+    
         rx.text(clicked_page ),
-        *[commit_row(row) for row in commits],
+        *cms,
         style = style.commit_container,
     )
+    return ind
 
 
 app = rx.App()
@@ -144,30 +188,63 @@ def detail_main(typeofissue = "old_vulnerabilities", color="yellow"):
 
     print(len(buf[typeofissue]))
     codeblocks = []
+    first = True
     for item in buf[typeofissue]:
+        
         codeblock = []
         shorthash = buf["hash"]
         shortauthor = buf["commit_data"]["author"]['username']
+        thiscommit =buf["commit_data"]
         if typeofissue == "old_vulnerabilities":
             thiscommit = item["vulnerability"]['commit_data']
             shortauthor = thiscommit["author"]["username"]
             shorthash = thiscommit["sha"][:9]
             codeblock =[
-                rx.link(thiscommit["sha"][:9], href=thiscommit["url"], style=style.bubble|style.bubble_hash),
+                # rx.link(thiscommit["sha"][:9], href=thiscommit["url"], style=style.bubble|style.bubble_hash),
             ]
-        codeblock.append( codediff(item['file']['details']) )
+        ln = item['vulnerability']['locations'][0]['line']
+        relevant = []
+        for line in item['file']['details']:
+            if line['add_line'] is None and line['del_line'] is None:
+                relevant.append(line)
+            if (line['del_line'] and abs(line['del_line']-ln)<10) or (line['add_line'] and abs(line['add_line']-ln)<10):
+                relevant.append(line)
+        ln = str(ln)
+        cdf = codediff(relevant) 
+        codeblock.append( cdf)
+        colorv = style.orange if  item['vulnerability']["details"]['problem.severity']=="warning" else style.red
         codeblocks.append( 
             rx.accordion.item(
                 header=rx.box(
-                    rx.link("test", href="https://google.com", style=style.bubble|style.vulnerabilitybubble),
-                    rx.text(item['vulnerability']['ruleId'],style=style.bubble|style.vulnerabilitybubble),
+
+                    rx.text(item['vulnerability']['ruleId'],style=style.bubble|style.vulnerabilitybubble|colorv),
                     rx.text(f"introduced in commit", style ={"display":"inline"}),
-                    rx.text(shorthash, style=style.bubble|style.vulnerabilitybubble),
+                    rx.link(shorthash,href=str(thiscommit["url"]), style=style.bubble|style.vulnerabilitybubble),
                     rx.text(f"by", style ={"display":"inline"}),
-                    rx.text(shortauthor, style=style.bubble|style.vulnerabilitybubble),
-                    
+                    rx.link(shortauthor, href =str(thiscommit["author"]["url"]), style=style.bubble|style.vulnerabilitybubble),
                 ),
-                content=rx.box(rx.text(item['file']['filepath']), *codeblock),
+                content=rx.box(
+                    rx.text(item['vulnerability']["details"]['name']+": ",style=style.inline|style.bold),
+                    rx.text(item['vulnerability']["details"]['description'],style=style.inline),
+                    rx.html("<br>"),
+                    rx.text("Severity:",style=style.inline|style.bold),
+                    rx.text(
+                        item['vulnerability']["details"]['security-severity'], 
+                        style=style.bubble|style.vulnerabilitybubble|colorv
+                    ),
+                    rx.text(
+                        item['vulnerability']["details"]['tags'][0], 
+                        style=style.bubble|style.vulnerabilitybubble|colorv
+                    ),
+                    rx.html("<br>"),
+                    rx.text('Source: ',style=style.inline|style.bold),
+                    rx.link(item['file']['filepath']+":"+ln, href="https://github.com/tensorflow/tensorflow/tree/master/"+item['file']['filepath'], style=style.inline),
+                    *codeblock,
+                    rx.html("<br>"),
+                    rx.button("✨", style={"background-color":"#0b082b","color":"white","border":"0","border-radius":"30%"}
+                            , on_click=rx.window_alert(fix_vulnerability(item))
+                              ),
+                    ),
             ),
         )
     return rx.accordion.root(
@@ -178,7 +255,11 @@ def detail_main(typeofissue = "old_vulnerabilities", color="yellow"):
         type="multiple",
         color_scheme=color
     )
+import time
+def cbk(item):
+    time.sleep(1.5)
 
+    print(type(item))
 for commit in commits:
     hash_ = commit['hash']
     buf = commit

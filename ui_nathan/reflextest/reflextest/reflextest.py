@@ -2,15 +2,15 @@
 
 import reflex as rx
 import sys, os
-sys.path.append("/home/nathan/Desktop/code-scanning-ai-hackathon")
 from hackathon.src.backend.main import init
-commits = init()
 from hackathon.src.llm.prompt import fix_vulnerability
 from rxconfig import config
-import style 
-from gitlog import gitlog
+import hackathon.src.frontend.reflextest.style as style
 opened_commit_global = set()
 clicked_page = ""
+
+commits = init()
+
 class mystate(rx.State):
     """The app state."""
     clicked_commit:str
