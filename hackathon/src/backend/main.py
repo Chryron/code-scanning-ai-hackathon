@@ -1,6 +1,7 @@
 import os
 from hackathon.src.parser.sarif import parse_sarif_files
 from hackathon.src.github.api import query_github, run_git_blame
+from hackathon.src.llm.prompt import fix_vulnerability
 
 # import levenshtein distance
 from Levenshtein import distance as levenshtein
@@ -17,8 +18,9 @@ def init():
             vul["commit_data"] = query_github(commit_sha = vul['blame']) 
     process_vulnerabilities(commits)
     
-    
-    
+    # vul = commits[0]['introduced'][0]
+    # fix_vulnerability(vul)
+
     return commits
 
 
@@ -52,7 +54,8 @@ def process_vulnerabilities(commits):
                         commit['introduced'].append(
                             {
                                 'vulnerability': vul,
-                                'file': file_data
+                                'file': file_data,
+                                'commit_data': vul['commit_data']
                             }
                         )
                         # vul['commit_data'] 
@@ -67,7 +70,9 @@ def process_vulnerabilities(commits):
                         commit['old_vulnerabilities'].append(
                             {
                                 'vulnerability': vul,
-                                'file': file_data
+                                'file': file_data,
+                                'commit_data': vul['commit_data']
+
                             }
                         )
                 else:
@@ -83,7 +88,8 @@ def process_vulnerabilities(commits):
                     commit['old_vulnerabilities'].append(
                         {
                             'vulnerability': vul,
-                            'file': file_data
+                            'file': file_data,
+                            'commit_data': vul['commit_data']
                         }
                     )
         else:
@@ -107,7 +113,9 @@ def process_vulnerabilities(commits):
                         commit['introduced'].append(
                             {
                                 'vulnerability': vul,
-                                'file': file_data
+                                'file': file_data,
+                                'commit_data': vul['commit_data']
+
                             }
                         )
                     else:
@@ -121,7 +129,9 @@ def process_vulnerabilities(commits):
                         commit['old_vulnerabilities'].append(
                             {
                                 'vulnerability': vul,
-                                'file': file_data
+                                'file': file_data,
+                                'commit_data': vul['commit_data']
+
                             }
                         )
                 else:
@@ -135,7 +145,8 @@ def process_vulnerabilities(commits):
                     commit['old_vulnerabilities'].append(
                         {
                             'vulnerability': vul,
-                            'file': file_data
+                            'file': file_data,
+                            'commit_data': vul['commit_data']
                         }
                     )
             to_remove = []
