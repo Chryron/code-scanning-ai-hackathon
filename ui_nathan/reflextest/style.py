@@ -67,3 +67,7 @@ bubble_date= {
 "background-color": "#17a2b8",
 "display":"inline",
 }
+
+detail_page_dropdown = {
+    "width":"100%",
+}
