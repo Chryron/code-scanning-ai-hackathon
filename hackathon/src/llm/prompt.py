@@ -17,7 +17,11 @@ def predict(prompt):
     print(AI_message.content)
     return AI_message.content
 
+memeo = None
 def fix_vulnerability(vulnerability_dict):
+    global memeo
+    if memeo:
+        return memeo
     vulnerability_id = vulnerability_dict['vulnerability']['ruleId']
     vulnerability_message = vulnerability_dict['vulnerability']['message']['text']
     line_number = vulnerability_dict['vulnerability']['locations'][0]['line']
@@ -43,4 +47,5 @@ Can you please suggest a fix to address this vulnerability? If possible provide 
         vulnerability_message = vulnerability_message,
         line_number = line_number,
         code = code))
-
+    memeo = output
+    return output
