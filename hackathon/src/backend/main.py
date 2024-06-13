@@ -1,6 +1,4 @@
 import os
-import sys, os
-sys.path.append("/home/nathan/Desktop/code-scanning-ai-hackathon/")
 from hackathon.src.parser.sarif import parse_sarif_files
 from hackathon.src.github.api import query_github, run_git_blame
 from hackathon.src.llm.prompt import fix_vulnerability
@@ -8,8 +6,16 @@ from hackathon.src.llm.prompt import fix_vulnerability
 # import levenshtein distance
 from Levenshtein import distance as levenshtein
 
+import pickle
+
+MEM_LOCATION = 'mem.pkl'
 # backend initialization for streamlit
 def init():
+    if os.path.exists(MEM_LOCATION):
+        # Open the pickle file and load the data into commits
+        with open(MEM_LOCATION, 'rb') as file:
+            commits = pickle.load(file)
+        return commits
     commits = parse_sarif_files()
     
     for commit in commits:
@@ -20,9 +26,8 @@ def init():
             vul["commit_data"] = query_github(commit_sha = vul['blame']) 
     process_vulnerabilities(commits)
     
-    # vul = commits[0]['introduced'][0]
-    # fix_vulnerability(vul)
-
+    with open(MEM_LOCATION, 'wb') as file:
+        pickle.dump(commits, file)
     return commits
 
 
