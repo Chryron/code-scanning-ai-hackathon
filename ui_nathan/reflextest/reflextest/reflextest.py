@@ -1,5 +1,6 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
-
+import time
+time.sleep(2)
 import reflex as rx
 import sys, os
 sys.path.append("/home/nathan/Desktop/code-scanning-ai-hackathon")
